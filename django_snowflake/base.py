@@ -106,7 +106,7 @@ class DatabaseWrapper(BaseDatabaseWrapper):
 
         if settings_dict['USER']:
             conn_params['user'] = settings_dict['USER']
-        else:
+        elif 'authenticator' not in conn_params:
             raise ImproperlyConfigured(self.settings_is_missing % 'USER')
 
         if settings_dict['PASSWORD']:
