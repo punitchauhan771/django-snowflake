@@ -50,8 +50,8 @@ class DatabaseClient(BaseDatabaseClient):
             args += ['-s', schema]
         if token:
             args += ['--token', token]
-        if user:
-            args += ['-u', user]
+        # if user:
+        #     args += ['-u', user]
         if warehouse:
             args += ['-w', warehouse]
 
