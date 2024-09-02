@@ -113,7 +113,7 @@ class DatabaseWrapper(BaseDatabaseWrapper):
             conn_params["token"] = self.get_login_token()
 
         if settings_dict['NAME']:
-            conn_params['database'] = self.ops.quote_name(settings_dict['NAME'])
+            conn_params['database'] = settings_dict['NAME']
 
          # Omit USER/PASSWORD if using token.
         if not use_token:
@@ -138,12 +138,12 @@ class DatabaseWrapper(BaseDatabaseWrapper):
             raise ImproperlyConfigured(self.settings_is_missing % 'ACCOUNT')
 
         if settings_dict.get('WAREHOUSE'):
-            conn_params['warehouse'] = self.ops.quote_name(settings_dict['WAREHOUSE'])
+            conn_params['warehouse'] = settings_dict['WAREHOUSE']
         else:
             raise ImproperlyConfigured(self.settings_is_missing % 'WAREHOUSE')
 
         if settings_dict.get('SCHEMA'):
-            conn_params['schema'] = self.ops.quote_name(settings_dict['SCHEMA'])
+            conn_params['schema'] = settings_dict['SCHEMA']
         else:
             raise ImproperlyConfigured(self.settings_is_missing % 'SCHEMA')
 
