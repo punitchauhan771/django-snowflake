@@ -92,6 +92,14 @@ class DatabaseWrapper(BaseDatabaseWrapper):
 
     settings_is_missing = "settings.DATABASES is missing '%s' for 'django_snowflake'."
 
+    def get_login_token(self):
+      """
+      Read the login token supplied automatically by Snowflake. These tokens
+      are short lived and should always be read right before creating any new connection.
+      """
+      with open("/snowflake/session/token", "r") as f:
+        return f.read()
+          
     def get_connection_params(self):
         settings_dict = self.settings_dict
         conn_params = {
@@ -101,13 +109,23 @@ class DatabaseWrapper(BaseDatabaseWrapper):
         if os.environ.get('RUNNING_DJANGOS_TEST_SUITE') != 'true':
             conn_params['application'] = 'Django_SnowflakeConnector_%s' % __version__
 
+        if use_token := os.path.exists("/snowflake/session/token"):
+            conn_params["token"] = self.get_login_token()
+
         if settings_dict['NAME']:
             conn_params['database'] = self.ops.quote_name(settings_dict['NAME'])
 
-        if settings_dict['USER']:
-            conn_params['user'] = settings_dict['USER']
-        elif 'authenticator' not in conn_params:
-            raise ImproperlyConfigured(self.settings_is_missing % 'USER')
+         # Omit USER/PASSWORD if using token.
+        if not use_token:
+            if settings_dict['USER']:
+                conn_params['user'] = settings_dict['USER']
+            else:
+                raise ImproperlyConfigured(self.settings_is_missing % 'USER')
+
+        # if settings_dict['USER']:
+        #     conn_params['user'] = settings_dict['USER']
+        # elif 'authenticator' not in conn_params:
+        #     raise ImproperlyConfigured(self.settings_is_missing % 'USER')
 
         if settings_dict['PASSWORD']:
             conn_params['password'] = settings_dict['PASSWORD']
