@@ -145,15 +145,14 @@ class DatabaseWrapper(BaseDatabaseWrapper):
             raise ImproperlyConfigured(self.settings_is_missing % 'SCHEMA')
 
         return conn_params
-
-    @async_unsafe
-    def get_new_connection_snowpark(self,conn_params):
-        return Snowpark_Database.builder.configs(self.get_connection_params()).create()
         
     @async_unsafe
     def get_new_connection(self, conn_params):
         try:
-            return Database.connect(**conn_params)
+            if os.path.exists("/snowflake/session/token"):
+                return Snowpark_Database.builder.configs(self.get_connection_params()).create()
+            else:
+                return Database.connect(**conn_params)
         except Exception as e:
             print(conn_params)
             print(e)
