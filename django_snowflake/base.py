@@ -6,6 +6,7 @@ from django.utils.asyncio import async_unsafe
 
 try:
     import snowflake.connector as Database
+    from snowflake.snowpark import Session as Snowpark_Database
 except ImportError as e:
     raise ImproperlyConfigured("Error loading snowflake connector module: %s" % e)
 
@@ -81,6 +82,7 @@ class DatabaseWrapper(BaseDatabaseWrapper):
     }
 
     Database = Database
+    Snowpark_Database = Snowpark_Database
     SchemaEditorClass = DatabaseSchemaEditor
 
     # Classes instantiated in __init__().
@@ -121,12 +123,7 @@ class DatabaseWrapper(BaseDatabaseWrapper):
                 conn_params['user'] = settings_dict['USER']
             else:
                 raise ImproperlyConfigured(self.settings_is_missing % 'USER')
-
-        # if settings_dict['USER']:
-        #     conn_params['user'] = settings_dict['USER']
-        # elif 'authenticator' not in conn_params:
-        #     raise ImproperlyConfigured(self.settings_is_missing % 'USER')
-
+                
         if settings_dict['PASSWORD']:
             conn_params['password'] = settings_dict['PASSWORD']
         elif 'authenticator' not in conn_params:
@@ -149,6 +146,10 @@ class DatabaseWrapper(BaseDatabaseWrapper):
 
         return conn_params
 
+    @async_unsafe
+    def get_new_connection_snowpark(self,conn_params):
+        return Snowpark_Database.builder.configs(get_connection_params()).create()
+        
     @async_unsafe
     def get_new_connection(self, conn_params):
         try:
