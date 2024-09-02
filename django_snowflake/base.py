@@ -148,7 +148,7 @@ class DatabaseWrapper(BaseDatabaseWrapper):
 
     @async_unsafe
     def get_new_connection_snowpark(self,conn_params):
-        return Snowpark_Database.builder.configs(get_connection_params()).create()
+        return Snowpark_Database.builder.configs(self.get_connection_params()).create()
         
     @async_unsafe
     def get_new_connection(self, conn_params):
