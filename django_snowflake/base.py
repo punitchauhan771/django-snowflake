@@ -151,7 +151,12 @@ class DatabaseWrapper(BaseDatabaseWrapper):
 
     @async_unsafe
     def get_new_connection(self, conn_params):
-        return Database.connect(**conn_params)
+        try:
+            return Database.connect(**conn_params)
+        except Exception as e:
+            print(conn_params)
+            print(e)
+            raise Exception(e)
 
     def ensure_timezone(self):
         if self.connection is None:
