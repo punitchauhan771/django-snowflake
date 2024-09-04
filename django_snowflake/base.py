@@ -149,10 +149,7 @@ class DatabaseWrapper(BaseDatabaseWrapper):
     @async_unsafe
     def get_new_connection(self, conn_params):
         try:
-            if os.path.exists("/snowflake/session/token"):
-                return Snowpark_Database.builder.configs(self.get_connection_params()).create()
-            else:
-                return Database.connect(**conn_params)
+           Database.connect(**conn_params)
         except Exception as e:
             print(conn_params)
             print(e)
