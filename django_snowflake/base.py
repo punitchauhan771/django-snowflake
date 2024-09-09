@@ -113,9 +113,8 @@ class DatabaseWrapper(BaseDatabaseWrapper):
 
         if use_token := os.path.exists("/snowflake/session/token"):
             conn_params["token"] = self.get_login_token()
-
-        if settings_dict['HOST']:
-            conn_params['host'] = settings_dict['HOST']
+            if settings_dict['HOST']:
+                conn_params['host'] = settings_dict['HOST']
         
         if settings_dict['NAME']:
             conn_params['database'] = settings_dict['NAME']
@@ -151,15 +150,7 @@ class DatabaseWrapper(BaseDatabaseWrapper):
         
     @async_unsafe
     def get_new_connection(self, conn_params):
-        try:
-            self.connection = Database.connect(**conn_params)
-            with self.connection as conn:
-                with conn.cursor() as cur:
-                    print(cur.execute("SELECT 'successfully connected to '||current_account();").fetchall())
-        except Exception as e:
-            print(conn_params)
-            print(e)
-            raise Exception(e)
+        Database.connect(**conn_params)
 
     def ensure_timezone(self):
         if self.connection is None:
