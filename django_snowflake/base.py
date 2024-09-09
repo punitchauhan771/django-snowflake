@@ -6,7 +6,6 @@ from django.utils.asyncio import async_unsafe
 
 try:
     import snowflake.connector as Database
-    # from snowflake.snowpark import Session as Snowpark_Database
 except ImportError as e:
     raise ImproperlyConfigured("Error loading snowflake connector module: %s" % e)
 
