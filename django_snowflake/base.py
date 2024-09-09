@@ -115,7 +115,7 @@ class DatabaseWrapper(BaseDatabaseWrapper):
             conn_params["token"] = self.get_login_token()
 
         if settings_dict['HOST']:
-            conn_paramas['host'] = settings_dict['HOST']
+            conn_params['host'] = settings_dict['HOST']
         
         if settings_dict['NAME']:
             conn_params['database'] = settings_dict['NAME']
