@@ -152,7 +152,10 @@ class DatabaseWrapper(BaseDatabaseWrapper):
     @async_unsafe
     def get_new_connection(self, conn_params):
         try:
-           Database.connect(**conn_params)
+           self.connection = Database.connect(**conn_params)
+            with self.connection as conn:
+                with conn.cursor() as cur:
+                    print(cur.execute("SELECT 'successfully connected to '||current_account();").fetchall())
         except Exception as e:
             print(conn_params)
             print(e)
