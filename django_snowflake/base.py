@@ -114,6 +114,9 @@ class DatabaseWrapper(BaseDatabaseWrapper):
         if use_token := os.path.exists("/snowflake/session/token"):
             conn_params["token"] = self.get_login_token()
 
+        if settings_dict['HOST']:
+            conn_paramas['host'] = settings_dict['HOST']
+        
         if settings_dict['NAME']:
             conn_params['database'] = settings_dict['NAME']
 
